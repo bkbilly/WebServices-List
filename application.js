@@ -2,8 +2,9 @@ hostname = window.location.hostname
 $(function() {
 	var wall = new freewall("#freewall");
 	wall.reset({
+		draggable: true,
 		animate: true,
-		cellW: 160,
+		cellW: 320,
 		cellH: 160,
 		fixSize: 0,
 		onResize: function() {
@@ -37,7 +38,7 @@ function getBrickURL(service){
 
 	brick = '<div class="brick size21" style="background-color: black; background-image: url(\'{icon}\');background-size:100%;">{{cover}}</div>';
 	cover = '<div class="cover">{{link}}</div>';
-	link = '<a class="float-left" href="{porturl}" target="_blank">{{contents}}</a>'
+	link = '<a class="float-left ignore-drag" href="{porturl}">{{contents}}</a>'
 	contents = '<h2> {name} </h2><div> {description} </div><div class="read-more">View detail ...</div>';
 	
 	brick = brick.replace('{icon}', icon);

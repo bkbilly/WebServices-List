@@ -10,6 +10,15 @@
 			"url":"/"
 		},
 		{
+			"name":"CouchPotato",
+			"icon":"images/couchpotato.png",
+			"description":"Download Movies",
+			"target":"local",
+			"secured":true,
+			"port":"5050",
+			"url":"/"
+		},
+		{
 			"name":"Transmission",
 			"icon":"images/transmission.png",
 			"description":"Download Torrents",
@@ -17,6 +26,15 @@
 			"secured":false,
 			"port":"9091",
 			"url":"/"
+		},
+		{
+			"name":"Wiki",
+			"icon":"images/wiki.png",
+			"description":"My personal Wikipedia",
+			"target":"local",
+			"secured":false,
+			"port":"80",
+			"url":"/wiki"
 		},
 		{
 			"name":"RainLoop Webmail",
@@ -71,15 +89,6 @@
 			"secured":false,
 			"port":"80",
 			"url":"/zm"
-		},
-		{
-			"name":"CouchPotato",
-			"icon":"images/couchpotato.png",
-			"description":"Download Movies",
-			"target":"local",
-			"secured":true,
-			"port":"5050",
-			"url":"/"
 		},
 		{
 			"name":"HP Officejet Pro 6830",

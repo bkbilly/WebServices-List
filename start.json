@@ -37,6 +37,15 @@
 			"url":"/wiki"
 		},
 		{
+			"name":"Shared Folders",
+			"icon":"images/shareFolder.png",
+			"description":"Apache share folders",
+			"target":"local",
+			"secured":false,
+			"port":"80",
+			"url":"/SharedFolders"
+		},
+		{
 			"name":"RainLoop Webmail",
 			"icon":"images/rainloop.png",
 			"description":"Read your mail",

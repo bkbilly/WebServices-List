@@ -64,15 +64,12 @@ h1, h2, h3, h4, h5, h6 {
 	font-weight: normal;
 }
 
+
 h1 {
 	text-align: center;
 	text-shadow: 4px 4px 8px red;
 }
 
-h2 {
-	text-align: center;
-	text-shadow: 1px 1px 1px black;
-}
 
 .brick {
 	float: left;
@@ -90,8 +87,9 @@ h2 {
 	margin: 20px;
 }
 
-.brick-link {
-	float: left;
+.brick h2 h4 {
+	text-align: left;
+	text-shadow: 1px 1px 1px black;
 }
 
 .brick .read-more {
@@ -111,3 +109,6 @@ h2 {
 	cursor: pointer;
 }
 
+.status {
+	position: static;
+}

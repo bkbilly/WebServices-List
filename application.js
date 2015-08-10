@@ -44,20 +44,21 @@ function getBrickURL(service){
 	if(service.secured == true){porturl = "https://"}else{porturl = "http://"}
 	if(service.target == "local"){hostname = window.location.hostname}else{hostname = service.target}
 	porturl = porturl + hostname + ":" + service.port + service.url
-
-	brick = '<div class="brick" style="background-image: url(\'{icon}\');">{{cover}}</div>';
-	cover = '<div class="cover">{{link}}</div>';
-	link = '<div class="brick-link"><a href="{porturl}">{{contents}}</a></div>'
-	contents = '<h2> {name} </h2><div> {description} </div><div class="read-more">View detail ...</div>';
 	
+	brick = '<div class="brick" style="background-image: url(\'{icon}\')">\
+		<div class="cover">\
+			<a href="{porturl}">\
+				<h2>{name}</h2>\
+				<h4>{description}</h4>\
+				<div class="read-more">View detail ...</div>\
+			</a>\
+		</div>\
+	</div>';
 	brick = brick.replace('{icon}', icon);
-	link = link.replace('{porturl}', porturl);
-	contents = contents.replace('{name}', name);
-	contents = contents.replace('{description}', description);
-
-	link = link.replace('{{contents}}', contents);
-	cover = cover.replace('{{link}}', link);
-	brick = brick.replace('{{cover}}', cover);
+	brick = brick.replace('{porturl}', porturl);
+	brick = brick.replace('{name}', name);
+	brick = brick.replace('{description}', description);
+	
 
 	return brick;
 }

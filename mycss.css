@@ -37,7 +37,7 @@
 
 /* ----------------- */
 body{
-	background-image: url('images/bg1.jpg');
+	background-image: url('PHP/GetImage.php?id=16');
 	margin: 0;
 	padding: 0;
 	line-height: 1.125em;

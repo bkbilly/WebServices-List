@@ -1,50 +1,41 @@
 hostname = window.location.hostname
-/*$(function() {
-	var wall = new freewall("#freewall");
-	wall.reset({
-		draggable: true,
-		animate: true,
-		cellW: 320,
-		cellH: 160,
-		fixSize: 0,
-		onResize: function() {
-			wall.refresh();
-		}
-	});
-	wall.fitWidth();
-	
-	$.getJSON( "start.json", function(data) {
-		for (var i = 0; i < data.services.length; i++) {
-			html = getBrickURL(data.services[i]);
-			wall.appendBlock(html);
-		};
-	}).fail(function(d, textStatus, error) {
-		console.error("getJSON failed, status: " + textStatus + ", error: " + error);
-	});
-});*/
+
 $( document ).ready(function() {
 	$("#header").click(function( event ) {
 		location.reload();
 	});
-	$.getJSON( "start.json", function(data) {
-		for (var i = 0; i < data.services.length; i++) {
-			html = getBrickURL(data.services[i]);
+	$.getJSON( "PHP/GetServices.php", function(data) {
+		for (var i = 0; i < data.length; i++) {
+			html = getBrick(data[i]);
 			$(".shapeshift").append(html);
 			$(".shapeshift").shapeshift();
 		};
 	}).fail(function(d, textStatus, error) {
+		brick = '<div class="brick">\
+			<div class="cover">\
+				<h2>{name}</h2>\
+				<h4>{description}</h4>\
+			</div>\
+		</div>';
+		brick = brick.replace('{name}', textStatus);
+		brick = brick.replace('{description}', error);
+		$(".shapeshift").append(brick);
+		$(".shapeshift").shapeshift();
 		console.error("getJSON failed, status: " + textStatus + ", error: " + error);
 	});
 });
 
-function getBrickURL(service){
-	icon = service.icon;
-	name = service.name;
-	description = service.description;
-	if(service.secured == true){porturl = "https://"}else{porturl = "http://"}
-	if(service.target == "local"){hostname = window.location.hostname}else{hostname = service.target}
-	porturl = porturl + hostname + ":" + service.port + service.url
-	
+function getBrick(service){
+	// console.log(service);
+	serviceLength = Object.keys(service).length;
+	name = service.sv_name;
+	icon = "PHP/GetImage.php?id=" + service.img_id;
+	description = service.sv_description;
+	target = service.sv_target;
+	secured = service.sv_secured;
+	port = service.sv_port;
+	url = service.sv_url;
+
 	brick = '<div class="brick" style="background-image: url(\'{icon}\')">\
 		<div class="cover">\
 			<a href="{porturl}">\
@@ -54,8 +45,24 @@ function getBrickURL(service){
 			</a>\
 		</div>\
 	</div>';
-	brick = brick.replace('{icon}', icon);
-	brick = brick.replace('{porturl}', porturl);
+	brick_simple = '<div class="brick">\
+		<div class="cover">\
+			<h2>{name}</h2>\
+			<h4>{description}</h4>\
+		</div>\
+	</div>';
+	if (serviceLength === 0) {
+		brick = brick_simple
+		brick = brick.replace('{name}', "Error");
+		brick = brick.replace('{description}', "Not Found");
+	} else {
+		if(secured == true){porturl = "https://"}else{porturl = "http://"}
+		if(target == "local"){hostname = window.location.hostname}else{hostname = target}
+		porturl = porturl + hostname + ":" + port + url
+		brick = brick.replace('{porturl}', porturl);
+		brick = brick.replace('{icon}', icon);
+	}
+
 	brick = brick.replace('{name}', name);
 	brick = brick.replace('{description}', description);
 	

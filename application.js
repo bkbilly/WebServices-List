@@ -1,9 +1,6 @@
 hostname = window.location.hostname
 
 $( document ).ready(function() {
-	$("#header").click(function( event ) {
-		location.reload();
-	});
 	$.getJSON( "PHP/GetServices.php", function(data) {
 		for (var i = 0; i < data.length; i++) {
 			html = getBrick(data[i]);
@@ -25,9 +22,32 @@ $( document ).ready(function() {
 	});
 });
 
+$(document).on("ss-rearranged" ,function(e, selected) {
+	// console.log($(selected).index());
+	options = {
+		enableDrag: false
+	}
+	positions = []
+	$(".shapeshift").children().each(function() {
+		sv_id = $(this)[0].id;
+		sv_order = $(this).index();
+		positions.push({
+			"sv_id": sv_id,
+			"sv_order": sv_order
+		});
+	});
+
+	$.post("PHP/UpdateOrder.php", {
+		positions
+	}).done(function( data ) {
+		console.log( data );
+	});
+});
+
 function getBrick(service){
 	// console.log(service);
 	serviceLength = Object.keys(service).length;
+	sv_id = service.sv_id
 	name = service.sv_name;
 	icon = "PHP/GetImage.php?id=" + service.img_id;
 	description = service.sv_description;
@@ -36,12 +56,11 @@ function getBrick(service){
 	port = service.sv_port;
 	url = service.sv_url;
 
-	brick = '<div class="brick" style="background-image: url(\'{icon}\')">\
+	brick = '<div id="{sv_id}" class="brick" style="background-image: url(\'{icon}\')">\
 		<div class="cover">\
 			<a href="{porturl}">\
 				<h2>{name}</h2>\
 				<h4>{description}</h4>\
-				<div class="read-more">View detail ...</div>\
 			</a>\
 		</div>\
 	</div>';
@@ -63,6 +82,7 @@ function getBrick(service){
 		brick = brick.replace('{icon}', icon);
 	}
 
+	brick = brick.replace('{sv_id}', sv_id);
 	brick = brick.replace('{name}', name);
 	brick = brick.replace('{description}', description);
 	

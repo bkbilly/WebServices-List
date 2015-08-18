@@ -1,7 +1,5 @@
-#shapeshift {
+.shapeshift {
 	width: 100%;
-	margin: 1em;
-	margin: 0 auto;
 	position: relative;
 }
 
@@ -14,24 +12,44 @@
 	/*padding: 20px;*/
 }
 
-#header{
-	background-color: rgba(0, 0, 0, 0.5);
+.container{
 	width: 100%;
-	bottom: 0;
-	padding: 0.5em 0;
-	cursor: pointer;
 }
-#footer{
+
+.footer{
 	background-color: rgba(0, 0, 0, 0.5);
-	width: 100%;
-	bottom: 0;
-	padding: 0.5em 0;
 }
 
 .footer-description{
 	text-align: right;
-	margin: 0 2em;
-	text-shadow: 0px 0px 0px yellow;
+	margin: 0.5em 2em;
+	text-shadow: 0px 0px 0px green;
+}
+
+.dropdown-menu{
+	background-image: linear-gradient(to bottom,#3c3c3c 0,#222 100%);
+}
+.brick {
+	float: left;
+	cursor: default;
+	overflow: hidden;
+	background-repeat: no-repeat;
+	background-position: center;
+	background-color: black;
+	background-size:100%;
+}
+
+.brick .cover {
+	overflow: hidden;
+	box-sizing: border-box;
+}
+
+.cover h2{
+	font-size: 2em;
+	text-align: center;
+}
+.cover h4{
+	text-align: center;
 }
 
 
@@ -58,57 +76,8 @@ a:visited {
 }
 
 h1, h2, h3, h4, h5, h6 {
-	text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
+	text-shadow: 2px 2px 0 rgba(0,0,0,1);
 	font-family: 'Lato', Georgia, Helvetica, Tahoma;
-	margin: 10px 0;
+	margin: 0.1em 0.2em;
 	font-weight: normal;
-}
-
-
-h1 {
-	text-align: center;
-	text-shadow: 4px 4px 8px red;
-}
-
-
-.brick {
-	float: left;
-	cursor: default;
-	overflow: hidden;
-	background-repeat: no-repeat;
-	background-position: center;
-	background-color: black;
-	background-size:100%;
-}
-
-.brick .cover {
-	overflow: hidden;
-	box-sizing: border-box;
-	margin: 20px;
-}
-
-.brick h2 h4 {
-	text-align: left;
-	text-shadow: 1px 1px 1px black;
-}
-
-.brick .read-more {
-	position: absolute;
-	display: none;
-	bottom: 0px;
-	left: 0px;
-	right: 0px;
-	height: 40px;
-	padding: 12px;
-	background: rgb(0, 0, 0);
-	background: rgba(0, 0, 0, 0.45);
-}
-
-.brick:hover .read-more {
-	display: block;
-	cursor: pointer;
-}
-
-.status {
-	position: static;
 }

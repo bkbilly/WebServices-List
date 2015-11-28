@@ -76,7 +76,7 @@ function getBrick(service){
 		brick = brick.replace('{description}', "Not Found");
 	} else {
 		if(secured == true){porturl = "https://"}else{porturl = "http://"}
-		if(target == "local"){hostname = window.location.hostname}else{hostname = target}
+		if(target == "127.0.0.1"){hostname = window.location.hostname}else{hostname = target}
 		porturl = porturl + hostname + ":" + port + url
 		brick = brick.replace('{porturl}', porturl);
 		brick = brick.replace('{icon}', icon);

@@ -75,7 +75,8 @@ function getBrick(service){
 	var http;
 	var porturl;
 
-	var brick = '<div id="{sv_id}" class="brick" style="background-image: url(\'{icon}\')">\
+	var brick = '<div id="{sv_id}" class="brick">\
+		<div class="brickBG" style="background-image: url(\'{icon}\')"></div>\
 		<a href="{porturl}">\
 			<div class="cover">\
 				<div class="status"><img id="{sv_status_id}" src="images/preloader.gif"></div>\
@@ -120,7 +121,6 @@ function CheckURL(sv_status_id, porturl){
 	xhttp.open('GET', 'dispatcher.php?action=urlExists&url=' + porturl, true);
 	xhttp.onreadystatechange = function(){
 		if (xhttp.readyState == 4 && xhttp.status == 200) {  
-			console.log(xhttp.responseText);
 			response = xhttp.responseText;
 			if (response === 'true')
 				$('#'+sv_status_id).attr("src", green);

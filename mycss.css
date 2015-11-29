@@ -38,10 +38,17 @@
 	float: left;
 	cursor: default;
 	overflow: hidden;
+}
+.brickBG {
 	background-repeat: no-repeat;
 	background-position: center;
 	background-color: black;
 	background-size:100%;
+	-webkit-filter: blur(0.2em);
+	-moz-filter: blur(0.2em);
+	-o-filter: blur(0.2em);
+	-ms-filter: blur(0.2em);
+	filter: blur(0.2em);
 }
 
 .brick .cover {

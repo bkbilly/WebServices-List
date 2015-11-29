@@ -55,23 +55,6 @@
 		}
 	}
 
-	function checkOpenPort($db){
-		$id = $_REQUEST['id'];
-		$sql = "SELECT * FROM services where sv_id=$id";
-		$ret = $db->query($sql);
-		while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
-			$host = $row['sv_target'];
-			$port = $row['sv_port'];
-			$connection = @fsockopen($host, $port);
-			if (is_resource($connection)){
-				echo 'Open';
-				fclose($connection);
-			} else {
-				echo 'closed';
-			}
-		}
-	}
-
 	function urlExists(){
 		$url = $_REQUEST['url'];
 		$handle = curl_init($url);

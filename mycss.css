@@ -60,7 +60,8 @@
 
 /* ----------------- */
 body{
-	background-image: url('PHP/GetImage.php?id=16');
+	/*background-image: url('dispatcher.php?action=getImage&id=16');*/
+	background-image: linear-gradient(to bottom,#3c3c3c 0,#222 100%);
 	margin: 0;
 	padding: 0;
 	line-height: 1.125em;

@@ -1,11 +1,50 @@
-hostname = window.location.hostname
+var hostname = window.location.hostname;
+var shapeshift;
+var searchString = '';
 
 $( document ).ready(function() {
-	$.getJSON( "PHP/GetServices.php", function(data) {
+	$('body').css('background-image','url(dispatcher.php?action=getImage&id=16)');
+	shapeshift = $(".shapeshift");
+	addServices(searchString);
+});
+
+$(document).on("ss-rearranged" ,function(e, selected) {
+	// console.log($(selected).index());
+	options = {
+		enableDrag: false
+	}
+	positions = []
+	shapeshift.children().each(function() {
+		sv_id = $(this)[0].id;
+		sv_order = $(this).index();
+		positions.push({
+			"sv_id": sv_id,
+			"sv_order": sv_order
+		});
+	});
+
+	$.post("dispatcher.php?action=updateOrder", {
+		positions
+	}).done(function( data ) {
+		console.log( data );
+	});
+});
+
+
+function searchServices(){
+	if (searchString !== $("#search").val()){
+		searchString = $("#search").val();
+		addServices(searchString);
+	}
+}
+
+function addServices(search){
+	shapeshift.empty();
+	$.getJSON( "dispatcher.php?action=getServices&search="+search, function(data) {
 		for (var i = 0; i < data.length; i++) {
 			html = getBrick(data[i]);
-			$(".shapeshift").append(html);
-			$(".shapeshift").shapeshift();
+			shapeshift.append(html);
+			shapeshift.shapeshift();
 		};
 	}).fail(function(d, textStatus, error) {
 		brick = '<div class="brick">\
@@ -16,47 +55,27 @@ $( document ).ready(function() {
 		</div>';
 		brick = brick.replace('{name}', textStatus);
 		brick = brick.replace('{description}', error);
-		$(".shapeshift").append(brick);
-		$(".shapeshift").shapeshift();
+		shapeshift.append(brick);
+		shapeshift.shapeshift();
 		console.error("getJSON failed, status: " + textStatus + ", error: " + error);
 	});
-});
-
-$(document).on("ss-rearranged" ,function(e, selected) {
-	// console.log($(selected).index());
-	options = {
-		enableDrag: false
-	}
-	positions = []
-	$(".shapeshift").children().each(function() {
-		sv_id = $(this)[0].id;
-		sv_order = $(this).index();
-		positions.push({
-			"sv_id": sv_id,
-			"sv_order": sv_order
-		});
-	});
-
-	$.post("PHP/UpdateOrder.php", {
-		positions
-	}).done(function( data ) {
-		console.log( data );
-	});
-});
+}
 
 function getBrick(service){
 	// console.log(service);
-	serviceLength = Object.keys(service).length;
-	sv_id = service.sv_id
-	name = service.sv_name;
-	icon = "PHP/GetImage.php?id=" + service.img_id;
-	description = service.sv_description;
-	target = service.sv_target;
-	secured = service.sv_secured;
-	port = service.sv_port;
-	url = service.sv_url;
+	var serviceLength = Object.keys(service).length;
+	var sv_id = service.sv_id
+	var name = service.sv_name;
+	var icon = "dispatcher.php?action=getImage&id=" + service.img_id;
+	var description = service.sv_description;
+	var target = service.sv_target;
+	var secured = service.sv_secured;
+	var port = service.sv_port;
+	var url = service.sv_url;
+	var http
+	var porturl
 
-	brick = '<div id="{sv_id}" class="brick" style="background-image: url(\'{icon}\')">\
+	var brick = '<div id="{sv_id}" class="brick" style="background-image: url(\'{icon}\')">\
 		<div class="cover">\
 			<a href="{porturl}">\
 				<h2>{name}</h2>\
@@ -75,9 +94,9 @@ function getBrick(service){
 		brick = brick.replace('{name}', "Error");
 		brick = brick.replace('{description}', "Not Found");
 	} else {
-		if(secured == true){porturl = "https://"}else{porturl = "http://"}
+		if(secured === "true"){http = "https://";}else{http = "http://";}
 		if(target == "127.0.0.1"){hostname = window.location.hostname}else{hostname = target}
-		porturl = porturl + hostname + ":" + port + url
+		porturl = http + hostname + ":" + port + url;
 		brick = brick.replace('{porturl}', porturl);
 		brick = brick.replace('{icon}', icon);
 	}

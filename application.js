@@ -114,23 +114,19 @@ function getBrick(service){
 }
 
 function CheckURL(sv_status_id, porturl){
-	console.log(sv_status_id);
 	green = "images/buttonGreen.png";
 	red = "images/buttonRed.png";
-	var request = new XMLHttpRequest();
-	request.open('GET', porturl, true);
-	request.onreadystatechange = function(){
-		if (request.readyState === 4){
-			if (request.status === 202) {  
-				console.log("exists");
+	var xhttp = new XMLHttpRequest();
+	xhttp.open('GET', 'dispatcher.php?action=urlExists&url=' + porturl, true);
+	xhttp.onreadystatechange = function(){
+		if (xhttp.readyState == 4 && xhttp.status == 200) {  
+			console.log(xhttp.responseText);
+			response = xhttp.responseText;
+			if (response === 'true')
 				$('#'+sv_status_id).attr("src", green);
-			}
-			else {
-				console.log("Not exists");
+			else
 				$('#'+sv_status_id).attr("src", red);
-				console.log($('#'+sv_status_id));
-			}
 		}
 	};
-	request.send();
+	xhttp.send();
 }

@@ -1,7 +1,7 @@
 <?php
-	// ini_set('display_errors', 1);
-	// ini_set('display_startup_errors', 1);
-	// error_reporting(-1);
+	ini_set('display_errors', 1);
+	ini_set('display_startup_errors', 1);
+	error_reporting(-1);
 
 	class MyDB extends SQLite3 {function __construct(){$this->open('services.db');}}
 	$db = new MyDB();
@@ -15,7 +15,7 @@
 		case 'getImage' : getImage($db); break;
 		case 'getServices' : getServices($db); break;
 		case 'updateOrder' : updateOrder($db); break;
-		case 'checkOpenPort' : checkOpenPort($db); break;
+		case 'urlExists' : urlExists(); break;
 		default: echo "Not an Option"; break;
 	}
 
@@ -71,4 +71,27 @@
 			}
 		}
 	}
+
+	function urlExists(){
+		$url = $_REQUEST['url'];
+		$handle = curl_init($url);
+		$options = array(
+			CURLOPT_SSL_VERIFYPEER => false,
+			CURLOPT_SSL_VERIFYHOST => false,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_FOLLOWLOCATION => true,
+		);
+		curl_setopt_array($handle,  $options);
+
+		curl_exec($handle);
+		$httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
+		if($httpCode == 404 or $httpCode == 0) {
+			echo 'false';
+		}
+		else{
+			echo 'true';
+		}
+		curl_close($handle);
+	}
+
 ?>

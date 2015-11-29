@@ -52,9 +52,20 @@
 .cover h2{
 	font-size: 2em;
 	text-align: center;
+	margin-right: 0.8em;
 }
 .cover h4{
 	text-align: center;
+}
+
+.cover .status{
+	position: absolute;
+	text-align: right;
+	padding: 0.5em;
+}
+
+.cover img{
+	width: 1em;
 }
 
 

@@ -3,20 +3,20 @@ var shapeshift;
 var searchString = '';
 
 $( document ).ready(function() {
-	$('body').css('background-image','url(dispatcher.php?action=getImage&id=16)');
+	$('body').css('background-image','url(images/background.jpg)');
 	shapeshift = $(".shapeshift");
 	addServices(searchString);
 });
 
 $(document).on("ss-rearranged" ,function(e, selected) {
 	// console.log($(selected).index());
-	options = {
+	var options = {
 		enableDrag: false
 	}
-	positions = []
+	var positions = []
 	shapeshift.children().each(function() {
-		sv_id = $(this)[0].id;
-		sv_order = $(this).index();
+		var sv_id = $(this)[0].id.replace('service_', '');
+		var sv_order = $(this).index();
 		positions.push({
 			"sv_id": sv_id,
 			"sv_order": sv_order
@@ -42,12 +42,11 @@ function addServices(search){
 	shapeshift.empty();
 	$.getJSON( "dispatcher.php?action=getServices&search="+search, function(data) {
 		for (var i = 0; i < data.length; i++) {
-			html = getBrick(data[i]);
-			shapeshift.append(html);
+			var brick = getBrick(data[i]);
 			shapeshift.shapeshift();
 		};
 	}).fail(function(d, textStatus, error) {
-		brick = '<div class="brick">\
+		var brick = '<div class="brick">\
 			<div class="cover">\
 				<h2>{name}</h2>\
 				<h4>{description}</h4>\
@@ -64,7 +63,8 @@ function addServices(search){
 function getBrick(service){
 	// console.log(service);
 	var serviceLength = Object.keys(service).length;
-	var sv_id = service.sv_id
+	var sv_id = "service_" + service.sv_id;
+	var sv_status_id = "status_" + service.sv_id;
 	var name = service.sv_name;
 	var icon = "dispatcher.php?action=getImage&id=" + service.img_id;
 	var description = service.sv_description;
@@ -72,16 +72,17 @@ function getBrick(service){
 	var secured = service.sv_secured;
 	var port = service.sv_port;
 	var url = service.sv_url;
-	var http
-	var porturl
+	var http;
+	var porturl;
 
 	var brick = '<div id="{sv_id}" class="brick" style="background-image: url(\'{icon}\')">\
-		<div class="cover">\
-			<a href="{porturl}">\
+		<a href="{porturl}">\
+			<div class="cover">\
+				<div class="status"><img id="{sv_status_id}" src="images/preloader.gif"></div>\
 				<h2>{name}</h2>\
 				<h4>{description}</h4>\
-			</a>\
-		</div>\
+			</div>\
+		</a>\
 	</div>';
 	brick_simple = '<div class="brick">\
 		<div class="cover">\
@@ -102,9 +103,34 @@ function getBrick(service){
 	}
 
 	brick = brick.replace('{sv_id}', sv_id);
+	brick = brick.replace('{sv_status_id}', sv_status_id);
 	brick = brick.replace('{name}', name);
 	brick = brick.replace('{description}', description);
 	
+	shapeshift.append(brick);
+	CheckURL(sv_status_id, porturl);
 
 	return brick;
+}
+
+function CheckURL(sv_status_id, porturl){
+	console.log(sv_status_id);
+	green = "images/buttonGreen.png";
+	red = "images/buttonRed.png";
+	var request = new XMLHttpRequest();
+	request.open('GET', porturl, true);
+	request.onreadystatechange = function(){
+		if (request.readyState === 4){
+			if (request.status === 202) {  
+				console.log("exists");
+				$('#'+sv_status_id).attr("src", green);
+			}
+			else {
+				console.log("Not exists");
+				$('#'+sv_status_id).attr("src", red);
+				console.log($('#'+sv_status_id));
+			}
+		}
+	};
+	request.send();
 }

@@ -16,7 +16,43 @@
 		case 'getServices' : getServices($db); break;
 		case 'updateOrder' : updateOrder($db); break;
 		case 'urlExists' : urlExists(); break;
+		case 'login' : login($db); break;
+		case 'logout' : logout(); break;
+		case 'usrStatus' : usrStatus(); break;
 		default: echo "Not an Option"; break;
+	}
+
+	function login($db){
+		session_start();
+		$user = $_REQUEST['user'];
+		$pass = $_REQUEST['password'];
+		$sql = "SELECT * FROM users where usr_name='$user' and usr_password='$pass'";
+		$ret = $db->query($sql);
+		$row = $ret->fetchArray(SQLITE3_ASSOC);
+		if($row){
+			$_SESSION['UserName']=$user;
+			echo "successfully connected";
+		}
+		else{
+			echo "failure connecting";
+		}
+	}
+
+	function logout(){
+		session_start();
+		unset($_SESSION['UserName']);
+		session_destroy();
+		echo "successfully loged out";
+	}
+
+	function usrStatus(){
+		session_start();
+		if(isset($_SESSION['UserName'])){
+			echo "connected";
+		}
+		else{
+			echo "not connected";
+		}
 	}
 
 	function getImage($db){

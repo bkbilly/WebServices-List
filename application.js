@@ -1,44 +1,19 @@
+// Init variables
 var hostname = window.location.hostname;
 var bricksDiv;
 var shapeshiftOptions = {enableDrag: false}
 var shapeshiftObject;
 var loggedIn;
 var searchString = '';
-var brickSampleService = '<div id="{sv_id}" class="brick">\
-		<div class="brickBG" style="background-image: url(\'{icon}\')"></div>\
-		<a href="{porturl}">\
-			<div class="cover">\
-				<div class="status"><img id="{sv_status_id}" src="images/preloader.gif"></div>\
-				<h2>{name}</h2>\
-				<h4>{description}</h4>\
-			</div>\
-		</a>\
-	</div>';
-var brickSampleError = '<div class="brick">\
-		<div class="cover">\
-			<h2>{name}</h2>\
-			<h4>{description}</h4>\
-		</div>\
-	</div>';
-var brickSampleAdmin = '<div id="{sv_id}" class="brick">\
-		<div class="brickBG" style="background-image: url(\'{icon}\')"></div>\
-		<a href="javascript:adminPanel({service})">\
-			<div class="cover">\
-				<h2>{name}</h2>\
-				<h4>{description}</h4>\
-			</div>\
-		</a>\
-	</div>';
 
 
 $( document ).ready(function() {
 	$('body').css('background-image','url(images/background.jpg)');
-	bricksDiv = $(".shapeshift");
+	bricksDiv = $(".shapeshiftServices");
 	setLogin();
 });
 
 $(document).on("ss-rearranged" ,function(e, selected) {
-	// console.log($(selected).index());
 	var positions = []
 	bricksDiv.children().each(function() {
 		var sv_id = $(this)[0].id.replace('service_', '');
@@ -52,13 +27,14 @@ $(document).on("ss-rearranged" ,function(e, selected) {
 
 	$.post("dispatcher.php?action=updateOrder", positions, function(data, textStatus) {
 		if(data['changed'] === false){
-			addServices(searchString);
+			refreshServices(searchString);
 		}
 	}, "json");
 
 });
 
 function login(){
+	// Login to the server
 	username = $('#inputUser').val();
 	password = $('#inputPass').val();
 	$.getJSON("dispatcher.php?action=login&user="+ username +"&password="+ password +"", function(response){
@@ -72,19 +48,22 @@ function login(){
 }
 
 function logout(){
+	// Logout from the server
 	$.getJSON("dispatcher.php?action=logout", function(response){
 		setLogin();
 	});
 }
 
 function searchServices(){
+	// Check for changes in search box and refresh services
 	if (searchString !== $("#search").val()){
 		searchString = $("#search").val();
-		addServices(searchString);
+		refreshServices(searchString);
 	}
 }
 
 function setLogin(){
+	// Get login status and change page
 	$.getJSON("dispatcher.php?action=usrStatus", function(response){
 		if(response['connected'] === true){
 			$('#loginBtn').css('display','none');
@@ -96,17 +75,27 @@ function setLogin(){
 			$('#logoutBtn').css('display','none');
 			loggedIn = false;
 		}
-		addServices(searchString);
+		refreshServices(searchString);
 	});
 }
 
-function addServices(search){
+function refreshServices(search){
+	// Get the searched services and based on the login status, change the properties of the shapeshift
 	bricksDiv.empty();
 	$.getJSON( "dispatcher.php?action=getServices&search="+search, function(data) {
 		for (var i = 0; i < data.length; i++) {
 			var brick = getBrick(data[i]);
+			bricksDiv.append(brick);
 		};
 		if(loggedIn === true){
+			brick = '<div id="{sv_id}" class="brick">\
+				<div class="brickAdd" style="background-image: url(\'images/addService.png\')"></div>\
+				<a href="javascript:adminPanel(\'new\')">\
+					<div class="cover">\
+					</div>\
+				</a>\
+			</div>';
+			bricksDiv.append(brick)
 			shapeshiftOptions.enableDrag = true;
 		} else {
 			shapeshiftOptions.enableDrag = false;
@@ -115,38 +104,84 @@ function addServices(search){
 	});
 }
 
-function adminPanel(sv_id){
-	$.getJSON( "dispatcher.php?action=getService&sv_id="+sv_id, function(data) {
-		$('#editName').val(data.sv_name);
-		$('#editDescription').val(data.sv_description);
-		$('#editTarget').val(data.sv_target);
-		$('#editURL').val(data.sv_url);
-		$('#editSecured').val(data.sv_secured);
-		$('#editIMG').val(data.img_id);
+function selectImage(img_id){
+	var img_url = "dispatcher.php?action=getImage&id=" + img_id;
+	$('#editIMG').val(img_id);
+	$('#imagesModal').modal('hide');
+	$('#selectedServiceImage').attr("src", img_url);
+}
 
-		$('#myModal').modal();
+function imagesPanel(){
+	$("#allImages").empty();
+	$('#imagesModal').modal();
+	$.getJSON( "dispatcher.php?action=getImagesIDs", function(data) {
+		for (var i = 0; i < data.length; i++) {
+			var img_id = data[i]
+			var img_url = "dispatcher.php?action=getImage&id=" + img_id;
+			$("#allImages").append('<img onclick="selectImage('+img_id+')" src="'+img_url+'">');
+		};
 	});
+}
 
+function adminPanel(sv_id){
+	// Add values to the Modal PopUp window and add, delete, update services
+	var action;
+	// add values to modal and open it
+	if(sv_id === 'new'){
+		action = 'addService';
+		$('#selectedServiceImage').attr("src", "images/addService.png");
+
+		$('#adminModal').modal();
+	} else {
+		action = 'updateService';
+		$.getJSON( "dispatcher.php?action=getService&sv_id="+sv_id, function(data) {
+			$('#editName').val(data.sv_name);
+			$('#editDescription').val(data.sv_description);
+			$('#editTarget').val(data.sv_target);
+			$('#editPort').val(data.sv_port);
+			$('#editURL').val(data.sv_url);
+			$('#editSecured').val(data.sv_secured);
+			$('#editIMG').val(data.img_id);
+			$('#selectedServiceImage').attr("src", "dispatcher.php?action=getImage&id="+data.img_id);
+
+			$('#adminModal').modal();
+		});
+	}
+
+	// clear save and delete events
 	$("#saveServiceBTN").off( "click" );
+	$("#deleteServiceBTN").off( "click" );
 	$("#saveServiceBTN").click(function() {
 		updateServiceData = {
 			'sv_id': sv_id,
 			'sv_name': $('#editName').val(),
 			'sv_description': $('#editDescription').val(),
 			'sv_target': $('#editTarget').val(),
+			'sv_port': $('#editPort').val(),
 			'sv_url': $('#editURL').val(),
 			'sv_secured': $('#editSecured').val(),
 			'img_id': $('#editIMG').val()
 		}
-		$.post("dispatcher.php?action=updateService", updateServiceData, function(data, textStatus) {
+		$.post("dispatcher.php?action="+action, updateServiceData, function(data, textStatus) {
 			if(data['changed'] === true){
-				addServices(searchString);
+				refreshServices(searchString);
+			}
+		}, "json");
+	});
+	$("#deleteServiceBTN").click(function() {
+		updateServiceData = {
+			'sv_id': sv_id
+		}
+		$.post("dispatcher.php?action=deleteService", updateServiceData, function(data, textStatus) {
+			if(data['changed'] === true){
+				refreshServices(searchString);
 			}
 		}, "json");
 	});
 }
 
 function getBrick(service){
+	// Read data from DB and return the html brick
 	var serviceLength = Object.keys(service).length;
 	var sv_id = service.sv_id;
 	var name = service.sv_name;
@@ -163,34 +198,57 @@ function getBrick(service){
 	var porturl;
 
 	if (serviceLength === 0) {
-		var brick = brickSampleError
+		var brick = '<div class="brick">\
+			<div class="cover">\
+				<h2>{name}</h2>\
+				<h4>{description}</h4>\
+			</div>\
+		</div>';
 		brick = brick.replace('{name}', "Error");
 		brick = brick.replace('{description}', "Not Found");
 	} else if(loggedIn === false){
-		var brick = brickSampleService;
+		var brick = '<div id="{sv_id}" class="brick">\
+			<div class="brickBG" style="background-image: url(\'{icon}\')"></div>\
+			<a href="{porturl}">\
+				<div class="cover">\
+					<div class="status"><img id="{sv_status_id}" src="images/preloader.gif"></div>\
+					<h2>{name}</h2>\
+					<h4>{description}</h4>\
+				</div>\
+			</a>\
+		</div>';
 		if(secured === "true"){http = "https://";}else{http = "http://";}
 		if(target == "127.0.0.1"){hostname = window.location.hostname}else{hostname = target}
 		porturl = http + hostname + ":" + port + url;
 		brick = brick.replace('{porturl}', porturl);
 		brick = brick.replace('{icon}', icon);
+		brick = brick.replace('{sv_id}', sv_service_id);
+		brick = brick.replace('{sv_status_id}', sv_status_id);
+		brick = brick.replace('{description}', description);
+		brick = brick.replace('{name}', name);
 		CheckURL(sv_status_id, porturl);
 	} else if(loggedIn === true){
-		var brick = brickSampleAdmin;
+		var brick = '<div id="{sv_id}" class="brick">\
+			<div class="brickBG" style="background-image: url(\'{icon}\')"></div>\
+			<a href="javascript:adminPanel({service})">\
+				<div class="cover">\
+					<h2>{name}</h2>\
+					<h4>{description}</h4>\
+				</div>\
+			</a>\
+		</div>';
 		brick = brick.replace('{service}', sv_id);
 		brick = brick.replace('{icon}', icon);
+		brick = brick.replace('{sv_id}', sv_service_id);
+		brick = brick.replace('{description}', description);
+		brick = brick.replace('{name}', name);
 	}
-
-	brick = brick.replace('{sv_id}', sv_service_id);
-	brick = brick.replace('{sv_status_id}', sv_status_id);
-	brick = brick.replace('{name}', name);
-	brick = brick.replace('{description}', description);
-	
-	bricksDiv.append(brick);
 
 	return brick;
 }
 
 function CheckURL(sv_status_id, porturl){
+	// Check the status of a service
 	green = "images/buttonGreen.png";
 	red = "images/buttonRed.png";
 	$.get("dispatcher.php?action=urlExists&url=" + porturl, function(response){

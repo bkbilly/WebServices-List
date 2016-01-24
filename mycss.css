@@ -1,15 +1,21 @@
-.shapeshift {
+.shapeshiftServices {
 	width: 100%;
 	position: relative;
 }
 
-.shapeshift div {
+.shapeshiftServices div {
 	height: 150px;
 	position: absolute;
 	width: 250px;
 	color: white;
 	border-radius: 15px;
 	/*padding: 20px;*/
+}
+
+#allImages img {
+	cursor: pointer;
+	height: 100px;
+	margin: 10px;
 }
 
 #loginBtn{
@@ -67,10 +73,36 @@
 	-ms-filter: blur(0.2em);
 	filter: blur(0.2em);
 }
+.brickAdd {
+	background-repeat: no-repeat;
+	background-position: center;
+	background-color: #4d4950;
+	background-size:100%;
+}
 
 .brick .cover {
 	overflow: hidden;
 	box-sizing: border-box;
+}
+
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
 }
 
 .cover h2{

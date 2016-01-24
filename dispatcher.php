@@ -13,9 +13,12 @@
 	$action = $_REQUEST['action'];
 	switch($action){
 		case 'getImage' : getImage($db); break;
+		case 'getImagesIDs' : getImagesIDs($db); break;
 		case 'getService' : getService($db); break;
 		case 'getServices' : getServices($db); break;
 		case 'updateOrder' : updateOrder($db); break;
+		case 'deleteService' : deleteService($db); break;
+		case 'addService' : addService($db); break;
 		case 'updateService' : updateService($db); break;
 		case 'urlExists' : urlExists(); break;
 		case 'login' : login($db); break;
@@ -58,6 +61,16 @@
 			$status = array('connected' => false);
 		}
 		echo json_encode($status);
+	}
+
+	function getImagesIDs($db){
+		$sql = "SELECT img_id FROM images ORDER BY img_id DESC";
+		$ret = $db->query($sql);
+		$imgIDs = array();
+		while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
+			$imgIDs[] = $row['img_id'];
+		}
+		echo json_encode($imgIDs);
 	}
 
 	function getImage($db){
@@ -119,6 +132,60 @@
 		echo json_encode($status);
 	}
 
+	function deleteService($db){
+		session_start();
+		if(isset($_SESSION['UserName'])){
+			$value = $_POST;
+			$sv_id = $value['sv_id'];
+			$sql = "DELETE FROM services WHERE sv_id = $sv_id";
+			$ret = $db->exec($sql);
+			if(!$ret){
+				$status = array('changed' => false, 'message' => $db->lastErrorMsg());
+				break;
+			} else {
+				if($db->changes() == 1){
+					$status = array('changed' => true, 'message' => "Successfully updated service");
+				} else{
+					$status = array('changed' => false, 'message' => "Can't update service");
+				}
+			}
+		}
+		else{
+			$status = array('changed' => false, 'message' => "User not connected");
+		}
+		echo json_encode($status);
+	}
+
+	function addService($db){
+		session_start();
+		if(isset($_SESSION['UserName'])){
+			$value = $_POST;
+			$sv_name = $value['sv_name'];
+			$sv_description = $value['sv_description'];
+			$sv_target = $value['sv_target'];
+			$sv_port = $value['sv_port'];
+			$sv_url = $value['sv_url'];
+			$sv_secured = $value['sv_secured'];
+			$img_id = $value['img_id'];
+			$sql = "INSERT INTO services (sv_id, sv_name, sv_description, sv_target, sv_port, sv_url, sv_secured, img_id, sv_order) VALUES ((SELECT max(sv_id) FROM services)+1, '$sv_name', '$sv_description', '$sv_target', '$sv_port', '$sv_url', '$sv_secured', $img_id, (SELECT max(sv_order) FROM services)+1)";
+			$ret = $db->exec($sql);
+			if(!$ret){
+				$status = array('changed' => false, 'message' => $db->lastErrorMsg());
+				break;
+			} else {
+				if($db->changes() == 1){
+					$status = array('changed' => true, 'message' => "Successfully updated service");
+				} else{
+					$status = array('changed' => false, 'message' => "Can't update service");
+				}
+			}
+		}
+		else{
+			$status = array('changed' => false, 'message' => "User not connected");
+		}
+		echo json_encode($status);
+	}
+
 	function updateService($db){
 		session_start();
 		if(isset($_SESSION['UserName'])){
@@ -127,10 +194,11 @@
 			$sv_name = $value['sv_name'];
 			$sv_description = $value['sv_description'];
 			$sv_target = $value['sv_target'];
+			$sv_port = $value['sv_port'];
 			$sv_url = $value['sv_url'];
 			$sv_secured = $value['sv_secured'];
 			$img_id = $value['img_id'];
-			$sql = "UPDATE services SET sv_name='$sv_name', sv_description='$sv_description', sv_target='$sv_target', sv_url='$sv_url', sv_secured='$sv_secured', img_id=$img_id WHERE sv_id=$sv_id";
+			$sql = "UPDATE services SET sv_name='$sv_name', sv_description='$sv_description', sv_target='$sv_target', sv_port='$sv_port', sv_url='$sv_url', sv_secured='$sv_secured', img_id=$img_id WHERE sv_id=$sv_id";
 			$ret = $db->exec($sql);
 			if(!$ret){
 				$status = array('changed' => false, 'message' => $db->lastErrorMsg());

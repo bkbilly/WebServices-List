@@ -26,8 +26,8 @@
 </head>
 
 <body>
-
-	<div class="modal fade" id="myModal" tabindex="-1" role="dialog">
+	<!-- Modal PopUp (adminPanel) -->
+	<div class="modal fade" id="adminModal" tabindex="-1" role="dialog">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -43,8 +43,12 @@
 								<td><input type="text" class="form-control" id="editDescription"></td>
 							</tr>
 							<tr>
-								<td width='33%'>Target IP address:</td>
+								<td width='33%'>IP address:</td>
 								<td><input type="text" class="form-control" id="editTarget"></td>
+							<tr>
+							<tr>
+								<td width='33%'>Port:</td>
+								<td><input type="text" class="form-control" id="editPort"></td>
 							<tr>
 								<td width='33%'>Rest of the URL:</td>
 								<td><input type="text" class="form-control" id="editURL"></td>
@@ -53,37 +57,75 @@
 								<td width='33%'>Uses HTTPs:</td>
 								<td><input type="text" class="form-control" id="editSecured"></tr>
 							</tr>
-							<tr>
+							<!-- <tr>
 								<td width='33%'>Image ID:</td>
 								<td><input type="text" class="form-control" id="editIMG"></td>
+							</tr> -->
+							<tr>
+								<td colspan='2'>
+									<div class="input-group">
+										<span class="input-group-btn">
+											<img src="" height="80" id="selectedServiceImage" onclick="imagesPanel()" style="cursor: pointer; margin-right: 20px">
+										</span>
+										<span class="input-group-btn">
+											<span class="btn btn-default btn-file">
+												<form enctype="multipart/form-data" action="dispatcher.php?action=uploadImage" id="formUploadImg" method="post">
+													Upload new image<input type="file" accept="image/x-png, image/gif, image/jpeg" onchange="$('#formUploadImg').submit();">
+												</form>
+											</span>
+										</span>
+										<input type="textbox" class="form-control" id="editIMG" style="display:none;" disabled>
+									</div>
+								</td>
 							</tr>
 					</table>
 				</div>
 				<div class="modal-footer">
+					<button type="button" class="btn btn-danger pull-left" data-dismiss="modal" id="deleteServiceBTN">Delete</button>
 					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 					<button type="button" class="btn btn-primary" data-dismiss="modal" id="saveServiceBTN">Save changes</button>
 				</div>
-			</div><!-- /.modal-content -->
-		</div><!-- /.modal-dialog -->
-	</div><!-- /.modal -->
+			</div>
+		</div>
+	</div>
 
+	<!-- Modal PopUp (selectImage) -->
+	<div class="modal fade" id="imagesModal" tabindex="-1" role="dialog">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h3 class="modal-title">Select or Upload Image</h3>
+				</div>
+				<div class="modal-body">
+					<div id="allImages"></div>
+				</div>
+			</div>
+		</div>
+	</div>
 
+	<!-- Bootstrap Header -->
 	<nav class="navbar navbar-default navbar-inverse">
+		<!-- Bootstrap Header specifics -->
 		<div class="navbar-header">
+			<!-- Add collapse on small window -->
 			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
 				<span class="sr-only">Toggle navigation</span>
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
+			<!-- Name of the Server -->
 			<a class="navbar-brand" href="javascript:history.go(0)">bknas Server</a>
 		</div>
+		<!-- SearchBar -->
 		<div id="navbar" class="collapse navbar-collapse">
 			<form class="navbar-form navbar-left" role="search">
 				<div class="form-group">
 					<input type="text" class="form-control" placeholder="Search" id="search" onkeyup="searchServices()">
 				</div>
 			</form>
+			<!-- SignIn/SignOut menu -->
 			<ul class="nav navbar-nav navbar-right">
 				<li id="logoutBtn">
 					<a href="javascript:logout()">Log Out</a>
@@ -118,11 +160,13 @@
 			</ul>
 		</div>
 	</nav>
+
+	<!-- List of Services -->
 	<div class="container">
-		<div class="starter-template">
-			<div class="shapeshift"></div>
-		</div>
+		<div class="shapeshiftServices"></div>
 	</div>
+
+	<!-- Footer with my Information -->
 	<footer class="footer">
 		<p class="footer-description">Developed by <a href="mailto:bkbilly@hotmail.com">bkbilly</a></p>
 	</footer>

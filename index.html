@@ -70,7 +70,7 @@
 										<span class="input-group-btn">
 											<span class="btn btn-default btn-file">
 												<form enctype="multipart/form-data" action="dispatcher.php?action=uploadImage" id="formUploadImg" method="post">
-													Upload new image<input type="file" accept="image/x-png, image/gif, image/jpeg" onchange="$('#formUploadImg').submit();">
+													Upload new image<input type="file" id="inputUploadImg" accept="image/*" onchange="$('#formUploadImg').submit(uploadIMG(event));">
 												</form>
 											</span>
 										</span>

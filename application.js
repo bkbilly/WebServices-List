@@ -123,6 +123,26 @@ function imagesPanel(){
 	});
 }
 
+function uploadIMG(event){
+	event.preventDefault();
+	var fileSelect = document.getElementById('inputUploadImg');
+	var file = fileSelect.files[0]
+	var formData = new FormData();
+	formData.append('image', file, file.name);
+
+	var xhttp = new XMLHttpRequest();
+	xhttp.open('POST', 'dispatcher.php?action=uploadImage', true);
+	xhttp.onreadystatechange = function () {
+		if (xhttp.readyState == 4 && xhttp.status == 200) {
+			data = JSON.parse(xhttp.responseText);
+			$('#selectedServiceImage').attr("src", "dispatcher.php?action=getImage&id="+data.img_id);
+		} else {
+			console.log('An error occurred!');
+		}
+	};
+	xhttp.send(formData);
+}
+
 function adminPanel(sv_id){
 	// Add values to the Modal PopUp window and add, delete, update services
 	var action;

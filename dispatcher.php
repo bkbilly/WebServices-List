@@ -14,6 +14,7 @@
 	switch($action){
 		case 'getImage' : getImage($db); break;
 		case 'getImagesIDs' : getImagesIDs($db); break;
+		case 'uploadImage' : uploadImage($db); break;
 		case 'getService' : getService($db); break;
 		case 'getServices' : getServices($db); break;
 		case 'updateOrder' : updateOrder($db); break;
@@ -24,7 +25,7 @@
 		case 'login' : login($db); break;
 		case 'logout' : logout(); break;
 		case 'usrStatus' : usrStatus(); break;
-		default: echo "Not an Option"; break;
+		default: header('HTTP/ 500'); echo "Not an Option"; break;
 	}
 
 	function login($db){
@@ -59,6 +60,27 @@
 		}
 		else{
 			$status = array('connected' => false);
+		}
+		echo json_encode($status);
+	}
+
+	function uploadImage($db){
+		session_start();
+		if(isset($_SESSION['UserName'])){
+			$tmpImg = file_get_contents($_FILES['image']['tmp_name']);
+
+			$sql = "INSERT INTO images (img_id, img_upload) VALUES ((SELECT max(img_id) FROM images)+1, ?)";
+			$query = $db->prepare($sql);
+			$query->bindValue(1, $tmpImg, SQLITE3_BLOB);
+			$run=$query->execute();
+
+			$sql = "SELECT max(img_id) as img_id FROM images";
+			$ret = $db->query($sql);
+			$row = $ret->fetchArray(SQLITE3_ASSOC);
+
+			$status = array('changed' => true, 'message' => "Successfully insert image", 'img_id' => $row['img_id']);
+		} else {
+			$status = array('changed' => false, 'message' => "User not connected");
 		}
 		echo json_encode($status);
 	}

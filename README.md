@@ -7,7 +7,7 @@ This project is a Web interface for a server that links all web-services in one.
 
 * PHP
 * Apache
-* php5-sqlite3
+* php5-curl
 
 ### Image Preview ###
 

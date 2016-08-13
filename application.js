@@ -8,7 +8,7 @@ var searchString = '';
 
 
 $( document ).ready(function() {
-	$('body').css('background-image','url(images/background.jpg)');
+	// $('body').css('background-image','url(images/background.jpg)');
 	bricksDiv = $(".shapeshiftServices");
 	setLogin();
 });
@@ -231,7 +231,7 @@ function getBrick(service){
 			<div class="brickBG" style="background-image: url(\'{icon}\')"></div>\
 			<a href="{porturl}">\
 				<div class="cover">\
-					<div class="status"><img id="{sv_status_id}" src="images/preloader.gif"></div>\
+					<div class="sphere" id="{sv_status_id}" style="height: 20px; width: 20px;"></div>\
 					<h2>{name}</h2>\
 					<h4>{description}</h4>\
 				</div>\
@@ -269,13 +269,11 @@ function getBrick(service){
 
 function CheckURL(sv_status_id, porturl){
 	// Check the status of a service
-	green = "images/buttonGreen.png";
-	red = "images/buttonRed.png";
 	$.get("dispatcher.php?action=urlExists&url=" + porturl, function(response){
 		if (response === 'true')
-			$('#'+sv_status_id).attr("src", green);
+			$('#'+sv_status_id).css("background-color", "green");
 		else
-			$('#'+sv_status_id).attr("src", red);
+			$('#'+sv_status_id).css("background-color", "red");
 	});
 
 }

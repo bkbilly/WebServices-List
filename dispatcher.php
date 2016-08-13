@@ -163,7 +163,6 @@
 			$ret = $db->exec($sql);
 			if(!$ret){
 				$status = array('changed' => false, 'message' => $db->lastErrorMsg());
-				break;
 			} else {
 				if($db->changes() == 1){
 					$status = array('changed' => true, 'message' => "Successfully updated service");
@@ -193,7 +192,6 @@
 			$ret = $db->exec($sql);
 			if(!$ret){
 				$status = array('changed' => false, 'message' => $db->lastErrorMsg());
-				break;
 			} else {
 				if($db->changes() == 1){
 					$status = array('changed' => true, 'message' => "Successfully updated service");
@@ -224,7 +222,6 @@
 			$ret = $db->exec($sql);
 			if(!$ret){
 				$status = array('changed' => false, 'message' => $db->lastErrorMsg());
-				break;
 			} else {
 				if($db->changes() == 1){
 					$status = array('changed' => true, 'message' => "Successfully updated service");

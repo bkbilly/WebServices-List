@@ -7,9 +7,7 @@
 	height: 150px;
 	position: absolute;
 	width: 250px;
-	color: white;
 	border-radius: 15px;
-	/*padding: 20px;*/
 }
 
 #allImages img {
@@ -36,14 +34,17 @@
 .footer{
 	position: fixed;
 	bottom: 0;
-	width: 100%;
+	width: 12em;
 	height: 2em;
-	background-color: rgba(0, 0, 0, 0.5);
+	right: 0em;
+	background-color: rgba(0, 0, 20, 0.7);
+	box-shadow: inset 0px 14px 20px -10px #223355;
+	border-radius: 30px 0 0 0;
 }
 
 .footer-description{
-	text-align: right;
-	margin: 0.5em 2em;
+	text-align: center;
+	margin: 0.5em 0.2em;
 	text-shadow: 0px 0px 0px green;
 }
 
@@ -61,19 +62,36 @@
 	float: left;
 	cursor: default;
 	overflow: hidden;
+	user-select: none;
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	-o-user-select: none;
 }
+
 .brickBG {
 	background-repeat: no-repeat;
 	background-position: center;
-	background-color: rgba(0, 0, 0, 0.1);
 	background-size:100%;
-	box-shadow: inset 0px 1px 20px #555;
+	background-color: rgba(0, 0, 0, 0.1);
+	box-shadow: inset 0px 0px 20px #555;
 }
+.brick:hover .brickBG {
+	background-color: rgba(0, 0, 0, 0.6);
+	box-shadow: inset 0px 0px 30px #777;
+}
+
 .brickAdd {
 	background-repeat: no-repeat;
 	background-position: center;
-	background-color: #4d4950;
 	background-size:100%;
+	background-color: rgba(50, 50, 50, 0.3);
+	box-shadow: inset 0px 0px 20px #555;
+}
+
+.brick:hover .brickAdd {
+	background-color: rgba(50, 50, 50, 0.6);
+	box-shadow: inset 0px 0px 30px #fff;
 }
 
 .brick .cover {
@@ -156,7 +174,6 @@ background-size:16px 16px;
 body{
 	/*background-image: url('dispatcher.php?action=getImage&id=16');*/
 	/*background-image: linear-gradient(to bottom,#3c3c3c 0,#222 100%);*/
-	
 
 	padding: 0;
 	line-height: 1.125em;

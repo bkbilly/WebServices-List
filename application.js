@@ -127,8 +127,10 @@ function uploadIMG(event){
 	event.preventDefault();
 	var fileSelect = document.getElementById('inputUploadImg');
 	var file = fileSelect.files[0]
+	console.log(file.size);
+	console.log(file);
 	var formData = new FormData();
-	formData.append('image', file, file.name);
+	formData.append('attachment', file, file.name);
 
 	var xhttp = new XMLHttpRequest();
 	xhttp.open('POST', 'dispatcher.php?action=uploadImage', true);

@@ -67,18 +67,23 @@
 	function uploadImage($db){
 		session_start();
 		if(isset($_SESSION['UserName'])){
-			$tmpImg = file_get_contents($_FILES['image']['tmp_name']);
-
-			$sql = "INSERT INTO images (img_id, img_upload) VALUES ((SELECT max(img_id) FROM images)+1, ?)";
-			$query = $db->prepare($sql);
-			$query->bindValue(1, $tmpImg, SQLITE3_BLOB);
-			$run=$query->execute();
-
-			$sql = "SELECT max(img_id) as img_id FROM images";
-			$ret = $db->query($sql);
-			$row = $ret->fetchArray(SQLITE3_ASSOC);
-
-			$status = array('changed' => true, 'message' => "Successfully insert image", 'img_id' => $row['img_id']);
+			print_r($_FILES);
+			if($_FILES['attachment']['size'] != 0){
+				$tmpImg = file_get_contents($_FILES['attachment']['tmp_name']);
+	
+				$sql = "INSERT INTO images (img_id, img_upload) VALUES ((SELECT max(img_id) FROM images)+1, ?)";
+				$query = $db->prepare($sql);
+				$query->bindValue(1, $tmpImg, SQLITE3_BLOB);
+				$run=$query->execute();
+	
+				$sql = "SELECT max(img_id) as img_id FROM images";
+				$ret = $db->query($sql);
+				$row = $ret->fetchArray(SQLITE3_ASSOC);
+	
+				$status = array('changed' => true, 'message' => "Successfully insert image", 'img_id' => $row['img_id']);
+			} else {
+				$status = array('changed' => false, 'message' => "Can't upload image...");
+			}
 		} else {
 			$status = array('changed' => false, 'message' => "User not connected");
 		}

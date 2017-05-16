@@ -109,11 +109,13 @@ function setLogin(){
 	$.getJSON("dispatcher.php?action=usrStatus", function(response){
 		if(response['connected'] === true){
 			$('#loginBtn').css('display','none');
+			$('#adminBtn').css('display','block');
 			$('#logoutBtn').css('display','block');
 			loggedIn = true;
 		}
 		else{
 			$('#loginBtn').css('display','block');
+			$('#adminBtn').css('display','none');
 			$('#logoutBtn').css('display','none');
 			loggedIn = false;
 		}

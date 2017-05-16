@@ -136,14 +136,20 @@
 	}
 
 	function getUserPass($db){
-		$sql = "SELECT * FROM users";
-		$ret = $db->query($sql);
-		$userpass = array();
-		while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
-			$userpass[] = $row;
+		session_start();
+		if(isset($_SESSION['UserName'])){
+			$sql = "SELECT * FROM users";
+			$ret = $db->query($sql);
+			$userpass = array();
+			while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
+				$userpass[] = $row;
+			}
+			echo json_encode($userpass[0]);
+		} else{
+			$status = array('changed' => false, 'message' => "User not connected");
 		}
-		echo json_encode($userpass[0]);
 	}
+
 	function setUserPass($db){
 		session_start();
 		if(isset($_SESSION['UserName'])){

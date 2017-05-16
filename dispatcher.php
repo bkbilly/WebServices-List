@@ -17,8 +17,11 @@
 		case 'uploadImage' : uploadImage($db); break;
 		case 'getService' : getService($db); break;
 		case 'getServices' : getServices($db); break;
+		case 'getUserPass' : getUserPass($db); break;
+		case 'setUserPass' : setUserPass($db); break;
 		case 'updateOrder' : updateOrder($db); break;
 		case 'deleteService' : deleteService($db); break;
+		case 'deleteImage' : deleteImage($db); break;
 		case 'addService' : addService($db); break;
 		case 'updateService' : updateService($db); break;
 		case 'urlExists' : urlExists(); break;
@@ -132,6 +135,52 @@
 		echo json_encode($services);
 	}
 
+	function getUserPass($db){
+		$sql = "SELECT * FROM users";
+		$ret = $db->query($sql);
+		$userpass = array();
+		while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
+			$userpass[] = $row;
+		}
+		echo json_encode($userpass[0]);
+	}
+	function setUserPass($db){
+		session_start();
+		if(isset($_SESSION['UserName'])){
+			$user = $_REQUEST['user'];
+			$pass = $_REQUEST['pass'];
+
+			$sql = "DELETE FROM users";
+			$ret = $db->exec($sql);
+			if(!$ret){
+				$status = array('changed' => false, 'message' => $db->lastErrorMsg());
+			} else {
+				if($db->changes() == 1){
+					$status = array('changed' => true, 'message' => "Successfully updated service");
+				} else{
+					$status = array('changed' => false, 'message' => "Can't update service");
+				}
+			}
+
+			$sql = "INSERT INTO users VALUES ('$user', '$pass')";
+			$ret = $db->exec($sql);
+			if(!$ret){
+				$status = array('changed' => false, 'message' => $db->lastErrorMsg());
+			} else {
+				if($db->changes() == 1){
+					$status = array('changed' => true, 'message' => "Successfully updated service");
+				} else{
+					$status = array('changed' => false, 'message' => "Can't update service");
+				}
+			}
+
+		}
+		else{
+			$status = array('changed' => false, 'message' => "User not connected");
+		}
+		echo json_encode($status);
+	}
+
 	function updateOrder($db){
 		session_start();
 		if(isset($_SESSION['UserName'])){
@@ -165,6 +214,29 @@
 			$value = $_POST;
 			$sv_id = $value['sv_id'];
 			$sql = "DELETE FROM services WHERE sv_id = $sv_id";
+			$ret = $db->exec($sql);
+			if(!$ret){
+				$status = array('changed' => false, 'message' => $db->lastErrorMsg());
+			} else {
+				if($db->changes() == 1){
+					$status = array('changed' => true, 'message' => "Successfully updated service");
+				} else{
+					$status = array('changed' => false, 'message' => "Can't update service");
+				}
+			}
+		}
+		else{
+			$status = array('changed' => false, 'message' => "User not connected");
+		}
+		echo json_encode($status);
+	}
+
+	function deleteImage($db){
+		session_start();
+		if(isset($_SESSION['UserName'])){
+			$value = $_POST;
+			$img_id = $value['img_id'];
+			$sql = "DELETE FROM images WHERE img_id = $img_id";
 			$ret = $db->exec($sql);
 			if(!$ret){
 				$status = array('changed' => false, 'message' => $db->lastErrorMsg());

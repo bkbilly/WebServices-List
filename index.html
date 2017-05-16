@@ -36,8 +36,8 @@
 </head>
 
 <body class="bg_stars">
-	<!-- Modal PopUp (adminPanel) -->
-	<div class="modal fade" id="adminModal" tabindex="-1" role="dialog">
+	<!-- Modal PopUp (servicesPanel) -->
+	<div class="modal fade" id="servicesModal" tabindex="-1" role="dialog">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -98,6 +98,33 @@
 			</div>
 		</div>
 	</div>
+	<!-- Modal PopUp (adminPanel) -->
+	<div class="modal fade" id="adminModal" tabindex="-1" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h3 class="modal-title">Update Credentials:</h3>
+				</div>
+				<div class="modal-body">
+					<table id="user" class="table table-bordered">
+							<tr>
+								<td width='33%'>Username:</td>
+								<td><input type="text" class="form-control" id="editUsername"></td>
+							</tr>
+							<tr>
+								<td width='33%'>Password:</td>
+								<td><input type="password" class="form-control" id="editPassword"></td>
+							</tr>
+					</table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="saveCredentials()">Save changes</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
 	<!-- Modal PopUp (selectImage) -->
 	<div class="modal fade" id="imagesModal" tabindex="-1" role="dialog">
@@ -137,6 +164,9 @@
 			</form>
 			<!-- SignIn/SignOut menu -->
 			<ul class="nav navbar-nav navbar-right">
+				<li id="adminBtn">
+					<a href="javascript:adminPanel()">Admin</a>
+				</li>
 				<li id="logoutBtn">
 					<a href="javascript:logout()">Log Out</a>
 				</li>

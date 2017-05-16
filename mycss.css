@@ -11,9 +11,19 @@
 }
 
 #allImages img {
+	max-height: 100px;
+	max-width: 160px;
+}
+
+.listimages {
 	cursor: pointer;
-	height: 100px;
+	display: inline-block;
 	margin: 10px;
+}
+
+.deleteimg {
+	opacity: 0.8;
+	outline: none;
 }
 
 #loginBtn{

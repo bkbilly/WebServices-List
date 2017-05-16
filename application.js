@@ -6,9 +6,51 @@ var shapeshiftObject;
 var loggedIn;
 var searchString = '';
 
+brick_add_template = '<div id="{sv_id}" class="brick">\
+	<div class="brickAdd" style="background-image: url(\'images/addService.png\')"></div>\
+	<a href="javascript:servicesPanel(\'new\')">\
+		<div class="cover">\
+		</div>\
+	</a>\
+</div>';
+
+var brick_empty_template = '<div class="brick"><div class="brickBG"></div>\
+	<div class="cover">\
+		<h2>{name}</h2>\
+		<h4>{description}</h4>\
+	</div>\
+</div>';
+
+var brick_user_template = '<div id="{sv_id}" class="brick">\
+	<div class="brickBG" style="background-image: url(\'{icon}\')"></div>\
+	<a href="{porturl}">\
+		<div class="cover">\
+			<div class="sphere" id="{sv_status_id}" style="height: 20px; width: 20px;"></div>\
+			<h2>{name}</h2>\
+			<h4>{description}</h4>\
+		</div>\
+	</a>\
+</div>';
+
+var brick_admin_template = '<div id="{sv_id}" class="brick">\
+	<div class="brickBG" style="background-image: url(\'{icon}\')"></div>\
+	<a href="javascript:servicesPanel({service})">\
+		<div class="cover">\
+			<h2>{name}</h2>\
+			<h4>{description}</h4>\
+		</div>\
+	</a>\
+</div>';
+
+var listimage_template = '<div class="listimages">\
+	<img onclick="selectImage({img_id})" src="{img_url}">\
+	<button type="button" class="deleteimg close" style="color:red;" onclick="deleteImage({img_id})">\
+		<span aria-hidden="true">&times;</span>\
+	</button>\
+</div>';
+
 
 $( document ).ready(function() {
-	// $('body').css('background-image','url(images/background.jpg)');
 	bricksDiv = $(".shapeshiftServices");
 	setLogin();
 });
@@ -81,27 +123,33 @@ function setLogin(){
 
 function refreshServices(search){
 	// Get the searched services and based on the login status, change the properties of the shapeshift
-	bricksDiv.empty();
 	$.getJSON( "dispatcher.php?action=getServices&search="+search, function(data) {
+		bricksDiv.empty();
+		if ( data.length === 0 ) {
+			var brick = getBrick();
+			bricksDiv.append(brick);
+		}
 		for (var i = 0; i < data.length; i++) {
 			var brick = getBrick(data[i]);
 			bricksDiv.append(brick);
 		};
 		if(loggedIn === true){
-			brick = '<div id="{sv_id}" class="brick">\
-				<div class="brickAdd" style="background-image: url(\'images/addService.png\')"></div>\
-				<a href="javascript:adminPanel(\'new\')">\
-					<div class="cover">\
-					</div>\
-				</a>\
-			</div>';
-			bricksDiv.append(brick)
+			bricksDiv.append(brick_add_template)
 			shapeshiftOptions.enableDrag = true;
 		} else {
 			shapeshiftOptions.enableDrag = false;
 		}
 		bricksDiv.shapeshift(shapeshiftOptions);
 	});
+}
+
+function deleteImage(img_id){
+	deleteImageData = {
+		'img_id': img_id
+	}
+	$.post("dispatcher.php?action=deleteImage", deleteImageData, function(data, textStatus) {
+		imagesPanel();
+	}, "json");
 }
 
 function selectImage(img_id){
@@ -111,6 +159,24 @@ function selectImage(img_id){
 	$('#selectedServiceImage').attr("src", img_url);
 }
 
+function adminPanel(){
+	$('#adminModal').modal();
+	$.getJSON( "dispatcher.php?action=getUserPass", function(data) {
+		$('#editUsername').val(data.usr_name);
+		$('#editPassword').val(data.usr_password);
+	});
+}
+
+function saveCredentials(){
+	changeCredentialsData = {
+		'user': $('#editUsername').val(),
+		'pass': $('#editPassword').val()
+	}
+	$.post("dispatcher.php?action=setUserPass", changeCredentialsData, function(data, textStatus) {
+	}, "json");
+
+}
+
 function imagesPanel(){
 	$("#allImages").empty();
 	$('#imagesModal').modal();
@@ -118,7 +184,10 @@ function imagesPanel(){
 		for (var i = 0; i < data.length; i++) {
 			var img_id = data[i]
 			var img_url = "dispatcher.php?action=getImage&id=" + img_id;
-			$("#allImages").append('<img onclick="selectImage('+img_id+')" src="'+img_url+'">');
+			var listimage = listimage_template;
+			listimage = listimage.replace(/\{img_id\}/g, img_id);
+			listimage = listimage.replace(/\{img_url\}/g, img_url);
+			$("#allImages").append(listimage);
 		};
 	});
 }
@@ -145,7 +214,7 @@ function uploadIMG(event){
 	xhttp.send(formData);
 }
 
-function adminPanel(sv_id){
+function servicesPanel(sv_id){
 	// Add values to the Modal PopUp window and add, delete, update services
 	var action;
 	// add values to modal and open it
@@ -153,7 +222,7 @@ function adminPanel(sv_id){
 		action = 'addService';
 		$('#selectedServiceImage').attr("src", "images/addService.png");
 
-		$('#adminModal').modal();
+		$('#servicesModal').modal();
 	} else {
 		action = 'updateService';
 		$.getJSON( "dispatcher.php?action=getService&sv_id="+sv_id, function(data) {
@@ -166,7 +235,7 @@ function adminPanel(sv_id){
 			$('#editIMG').val(data.img_id);
 			$('#selectedServiceImage').attr("src", "dispatcher.php?action=getImage&id="+data.img_id);
 
-			$('#adminModal').modal();
+			$('#servicesModal').modal();
 		});
 	}
 
@@ -202,70 +271,53 @@ function adminPanel(sv_id){
 	});
 }
 
-function getBrick(service){
-	// Read data from DB and return the html brick
-	var serviceLength = Object.keys(service).length;
-	var sv_id = service.sv_id;
-	var name = service.sv_name;
-	var img_id = service.img_id;
-	var description = service.sv_description;
-	var target = service.sv_target;
-	var secured = service.sv_secured;
-	var port = service.sv_port;
-	var url = service.sv_url;
-	var sv_service_id = "service_" + sv_id;
-	var sv_status_id = "status_" + sv_id;
-	var icon = "dispatcher.php?action=getImage&id=" + img_id;
-	var http;
-	var porturl;
+function getBrick(service=false){
+	if ( service !== false ){
+		// Read data from DB and return the html brick
+		var serviceLength = Object.keys(service).length;
+		var sv_id = service.sv_id;
+		var name = service.sv_name;
+		var img_id = service.img_id;
+		var description = service.sv_description;
+		var target = service.sv_target;
+		var secured = service.sv_secured;
+		var port = service.sv_port;
+		var url = service.sv_url;
+		var sv_service_id = "service_" + sv_id;
+		var sv_status_id = "status_" + sv_id;
+		var icon = "dispatcher.php?action=getImage&id=" + img_id;
+		var http;
+		var porturl;
 
-	if (serviceLength === 0) {
-		var brick = '<div class="brick">\
-			<div class="cover">\
-				<h2>{name}</h2>\
-				<h4>{description}</h4>\
-			</div>\
-		</div>';
-		brick = brick.replace('{name}', "Error");
-		brick = brick.replace('{description}', "Not Found");
-	} else if(loggedIn === false){
-		var brick = '<div id="{sv_id}" class="brick">\
-			<div class="brickBG" style="background-image: url(\'{icon}\')"></div>\
-			<a href="{porturl}">\
-				<div class="cover">\
-					<div class="sphere" id="{sv_status_id}" style="height: 20px; width: 20px;"></div>\
-					<h2>{name}</h2>\
-					<h4>{description}</h4>\
-				</div>\
-			</a>\
-		</div>';
-		if(secured === "true"){http = "https://";}else{http = "http://";}
-		if(target == "127.0.0.1"){hostname = window.location.hostname}else{hostname = target}
-		porturl = http + hostname + ":" + port + url;
-		brick = brick.replace('{porturl}', porturl);
-		brick = brick.replace('{icon}', icon);
-		brick = brick.replace('{sv_id}', sv_service_id);
-		brick = brick.replace('{sv_status_id}', sv_status_id);
-		brick = brick.replace('{description}', description);
-		brick = brick.replace('{name}', name);
-		CheckURL(sv_status_id, porturl);
-	} else if(loggedIn === true){
-		var brick = '<div id="{sv_id}" class="brick">\
-			<div class="brickBG" style="background-image: url(\'{icon}\')"></div>\
-			<a href="javascript:adminPanel({service})">\
-				<div class="cover">\
-					<h2>{name}</h2>\
-					<h4>{description}</h4>\
-				</div>\
-			</a>\
-		</div>';
-		brick = brick.replace('{service}', sv_id);
-		brick = brick.replace('{icon}', icon);
-		brick = brick.replace('{sv_id}', sv_service_id);
-		brick = brick.replace('{description}', description);
-		brick = brick.replace('{name}', name);
+		if (serviceLength === 0) {
+			var brick = brick_empty_template;
+			brick = brick.replace(/\{name\}/g, "Error");
+			brick = brick.replace(/\{description\}/g, "Not Found");
+		} else if(loggedIn === false){
+			var brick = brick_user_template;
+			if(secured === "true"){http = "https://";}else{http = "http://";}
+			if(target == "127.0.0.1"){hostname = window.location.hostname}else{hostname = target}
+			porturl = http + hostname + ":" + port + url;
+			brick = brick.replace(/\{porturl\}/g, porturl);
+			brick = brick.replace(/\{icon\}/g, icon);
+			brick = brick.replace(/\{sv_id\}/g, sv_service_id);
+			brick = brick.replace(/\{sv_status_id\}/g, sv_status_id);
+			brick = brick.replace(/\{description\}/g, description);
+			brick = brick.replace(/\{name\}/g, name);
+			CheckURL(sv_status_id, porturl);
+		} else if(loggedIn === true){
+			var brick = brick_admin_template;
+			brick = brick.replace(/\{service\}/g, sv_id);
+			brick = brick.replace(/\{icon\}/g, icon);
+			brick = brick.replace(/\{sv_id\}/g, sv_service_id);
+			brick = brick.replace(/\{description\}/g, description);
+			brick = brick.replace(/\{name\}/g, name);
+		}
+	} else {
+		var brick = brick_empty_template;
+		brick = brick.replace(/\{name\}/g, "Error");
+		brick = brick.replace(/\{description\}/g, "Not Found");
 	}
-
 	return brick;
 }
 

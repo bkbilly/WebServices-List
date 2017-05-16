@@ -7,8 +7,9 @@ This project is a Web interface for a server that links all web-services in one.
 
 * PHP
 * Apache
-* php5-curl
+* php7.0-curl
+* php7.0-sqlite3
 
 ### Image Preview ###
 
-![bknasServer.png](https://bitbucket.org/repo/7pk5Xn/images/1617226951-bknasServer.png)
+![bknasServer.png](/images/preview.png)

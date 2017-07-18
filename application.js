@@ -75,6 +75,10 @@ $(document).on("ss-rearranged" ,function(e, selected) {
 
 });
 
+$(window).on('resize', function(){
+	bricksDiv.shapeshift()
+});
+
 function login(){
 	// Login to the server
 	username = $('#inputUser').val();

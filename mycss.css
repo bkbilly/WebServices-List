@@ -1,14 +1,25 @@
+@media all and (min-width: 768px){
+    .shapeshiftServices div {
+            height: 150px;
+            position: absolute;
+            width: 250px;
+            border-radius: 15px;
+    }
+}
+@media not all and (min-width: 768px){
+    .shapeshiftServices div {
+            height: 150px;
+            position: absolute;
+            width: 150px;
+            border-radius: 15px;
+    }
+}
+
 .shapeshiftServices {
 	width: 100%;
 	position: relative;
 }
 
-.shapeshiftServices div {
-	height: 150px;
-	position: absolute;
-	width: 250px;
-	border-radius: 15px;
-}
 
 #allImages img {
 	max-height: 100px;

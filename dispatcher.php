@@ -125,13 +125,25 @@
 	}
 
 	function getServices($db){
-		$search = $_REQUEST['search'];
-		$sql = "SELECT * FROM services WHERE sv_name like '%$search%' or sv_description like '%$search%' ORDER BY sv_order ASC";
-		$ret = $db->query($sql);
-		$services = array();
-		while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
-			$services[] = $row;
+		session_start();
+		if(isset($_SESSION['UserName'])){
+			$search = $_REQUEST['search'];
+			$sql = "SELECT * FROM services WHERE sv_name like '%$search%' or sv_description like '%$search%' ORDER BY sv_order ASC";
+			$ret = $db->query($sql);
+			$services = array();
+			while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
+				$services[] = $row;
+			}
+		} else{
+			$search = $_REQUEST['search'];
+			$sql = "SELECT * FROM services WHERE (sv_name like '%$search%' or sv_description like '%$search%') and sv_hide != 'true' ORDER BY sv_order ASC";
+			$ret = $db->query($sql);
+			$services = array();
+			while($row = $ret->fetchArray(SQLITE3_ASSOC) ){
+				$services[] = $row;
+			}
 		}
+
 		echo json_encode($services);
 	}
 
@@ -270,8 +282,9 @@
 			$sv_port = $value['sv_port'];
 			$sv_url = $value['sv_url'];
 			$sv_secured = $value['sv_secured'];
+			$sv_hide = $value['sv_hide'];
 			$img_id = $value['img_id'];
-			$sql = "INSERT INTO services (sv_id, sv_name, sv_description, sv_target, sv_port, sv_url, sv_secured, img_id, sv_order) VALUES ((SELECT max(sv_id) FROM services)+1, '$sv_name', '$sv_description', '$sv_target', '$sv_port', '$sv_url', '$sv_secured', $img_id, (SELECT max(sv_order) FROM services)+1)";
+			$sql = "INSERT INTO services (sv_id, sv_name, sv_description, sv_target, sv_port, sv_url, sv_secured, img_id, sv_order, sv_hide) VALUES ((SELECT max(sv_id) FROM services)+1, '$sv_name', '$sv_description', '$sv_target', '$sv_port', '$sv_url', '$sv_secured', $img_id, (SELECT max(sv_order) FROM services)+1), $sv_hide";
 			$ret = $db->exec($sql);
 			if(!$ret){
 				$status = array('changed' => false, 'message' => $db->lastErrorMsg());
@@ -300,8 +313,9 @@
 			$sv_port = $value['sv_port'];
 			$sv_url = $value['sv_url'];
 			$sv_secured = $value['sv_secured'];
+			$sv_hide = $value['sv_hide'];
 			$img_id = $value['img_id'];
-			$sql = "UPDATE services SET sv_name='$sv_name', sv_description='$sv_description', sv_target='$sv_target', sv_port='$sv_port', sv_url='$sv_url', sv_secured='$sv_secured', img_id=$img_id WHERE sv_id=$sv_id";
+			$sql = "UPDATE services SET sv_name='$sv_name', sv_description='$sv_description', sv_target='$sv_target', sv_port='$sv_port', sv_url='$sv_url', sv_secured='$sv_secured', img_id=$img_id, sv_hide='$sv_hide' WHERE sv_id=$sv_id";
 			$ret = $db->exec($sql);
 			if(!$ret){
 				$status = array('changed' => false, 'message' => $db->lastErrorMsg());

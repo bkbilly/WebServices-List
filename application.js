@@ -32,7 +32,7 @@ var brick_user_template = '<div id="{sv_id}" class="brick">\
 	</a>\
 </div>';
 
-var brick_admin_template = '<div id="{sv_id}" class="brick">\
+var brick_admin_template = '<div id="{sv_id}" class="brick {extraclass}">\
 	<div class="brickBG" style="background-image: url(\'{icon}\')"></div>\
 	<a href="javascript:servicesPanel({service})">\
 		<div class="cover">\
@@ -237,7 +237,8 @@ function servicesPanel(sv_id){
 			$('#editTarget').val(data.sv_target);
 			$('#editPort').val(data.sv_port);
 			$('#editURL').val(data.sv_url);
-			$('#editSecured').val(data.sv_secured);
+			$('#editSecured').prop("checked", (data.sv_secured == 'true'));
+			$('#editHidden').prop("checked", (data.sv_hide == 'true'));
 			$('#editIMG').val(data.img_id);
 			$('#selectedServiceImage').attr("src", "dispatcher.php?action=getImage&id="+data.img_id);
 
@@ -256,9 +257,11 @@ function servicesPanel(sv_id){
 			'sv_target': $('#editTarget').val(),
 			'sv_port': $('#editPort').val(),
 			'sv_url': $('#editURL').val(),
-			'sv_secured': $('#editSecured').val(),
+			'sv_secured': $('#editSecured').prop("checked").toString(),
+			'sv_hide': $('#editHidden').prop("checked").toString(),
 			'img_id': $('#editIMG').val()
 		}
+		console.log(updateServiceData)
 		$.post("dispatcher.php?action="+action, updateServiceData, function(data, textStatus) {
 			if(data['changed'] === true){
 				refreshServices(searchString);
@@ -295,6 +298,11 @@ function getBrick(service=false){
 		var http;
 		var porturl;
 
+		var extraclass = "";
+		if (service.sv_hide == "true") {
+			extraclass = "inactive";
+		}
+
 		if (serviceLength === 0) {
 			var brick = brick_empty_template;
 			brick = brick.replace(/\{name\}/g, "Error");
@@ -314,6 +322,7 @@ function getBrick(service=false){
 		} else if(loggedIn === true){
 			var brick = brick_admin_template;
 			brick = brick.replace(/\{service\}/g, sv_id);
+			brick = brick.replace(/\{extraclass\}/g, extraclass);
 			brick = brick.replace(/\{icon\}/g, icon);
 			brick = brick.replace(/\{sv_id\}/g, sv_service_id);
 			brick = brick.replace(/\{description\}/g, description);

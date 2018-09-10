@@ -15,6 +15,16 @@
     }
 }
 
+.inactive {
+	opacity: 0.4;
+	/*background-color: #000; */
+	-webkit-filter: grayscale(100%); 
+	-moz-filter: grayscale(100%);
+	-o-filter: grayscale(100%);
+	-ms-filter: grayscale(100%);
+	filter: grayscale(100%); 
+}
+
 .shapeshiftServices {
 	width: 100%;
 	position: relative;

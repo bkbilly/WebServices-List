@@ -65,7 +65,7 @@ $(document).on("ss-rearranged" ,function(e, selected) {
 			"sv_order": sv_order
 		});
 	});
-	positions = {positions}
+	positions = {'positions': positions}
 
 	$.post("dispatcher.php?action=updateOrder", positions, function(data, textStatus) {
 		if(data['changed'] === false){
@@ -280,7 +280,7 @@ function servicesPanel(sv_id){
 	});
 }
 
-function getBrick(service=false){
+function getBrick(service){
 	if ( service !== false ){
 		// Read data from DB and return the html brick
 		var serviceLength = Object.keys(service).length;

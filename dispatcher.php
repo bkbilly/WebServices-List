@@ -206,18 +206,20 @@
 			foreach ($new_order['positions'] as $value) {
 				$sv_id = $value['sv_id'];
 				$sv_order = $value['sv_order'];
-				$sql = "UPDATE services SET sv_order=$sv_order WHERE sv_id=$sv_id";
-				$ret = $db->exec($sql);
-				if(!$ret){
-					$status = array('changed' => false, 'message' => $db->lastErrorMsg());
-					break;
-				} else {
-					if($db->changes() == 1){
-						$status = array('changed' => true, 'message' => "Successfully changed order");
-					} else{
-						$status = array('changed' => false, 'message' => "Can't change order");
-					}
-				}
+                                if (is_numeric($sv_id)){
+				    $sql = "UPDATE services SET sv_order=$sv_order WHERE sv_id=$sv_id";
+				    $ret = $db->exec($sql);
+				    if(!$ret){
+				    	$status = array('changed' => false, 'message' => $db->lastErrorMsg());
+				    	break;
+				    } else {
+				    	if($db->changes() == 1){
+				    		$status = array('changed' => true, 'message' => "Successfully changed order");
+				    	} else{
+				    		$status = array('changed' => false, 'message' => "Can't change order");
+				    	}
+				    }
+                                }
 			}
 		}
 		else{
@@ -284,7 +286,8 @@
 			$sv_secured = $value['sv_secured'];
 			$sv_hide = $value['sv_hide'];
 			$img_id = $value['img_id'];
-			$sql = "INSERT INTO services (sv_id, sv_name, sv_description, sv_target, sv_port, sv_url, sv_secured, img_id, sv_order, sv_hide) VALUES ((SELECT max(sv_id) FROM services)+1, '$sv_name', '$sv_description', '$sv_target', '$sv_port', '$sv_url', '$sv_secured', $img_id, (SELECT max(sv_order) FROM services)+1), $sv_hide";
+			$sql = "INSERT INTO services (sv_id, sv_name, sv_description, sv_target, sv_port, sv_url, sv_secured, img_id, sv_order, sv_hide) VALUES ((SELECT max(sv_id) FROM services)+1, '$sv_name', '$sv_description', '$sv_target', '$sv_port', '$sv_url', '$sv_secured', $img_id, (SELECT max(sv_order) FROM services)+1, '$sv_hide')";
+                        echo $sql;
 			$ret = $db->exec($sql);
 			if(!$ret){
 				$status = array('changed' => false, 'message' => $db->lastErrorMsg());

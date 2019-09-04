@@ -68,9 +68,7 @@ $(document).on("ss-rearranged" ,function(e, selected) {
 	positions = {'positions': positions}
 
 	$.post("dispatcher.php?action=updateOrder", positions, function(data, textStatus) {
-		if(data['changed'] === false){
-			refreshServices(searchString);
-		}
+		refreshServices(searchString);
 	}, "json");
 
 });
@@ -263,10 +261,8 @@ function servicesPanel(sv_id){
 		}
 		console.log(updateServiceData)
 		$.post("dispatcher.php?action="+action, updateServiceData, function(data, textStatus) {
-			if(data['changed'] === true){
-				refreshServices(searchString);
-			}
 		}, "json");
+	        refreshServices(searchString);
 	});
 	$("#deleteServiceBTN").click(function() {
 		updateServiceData = {

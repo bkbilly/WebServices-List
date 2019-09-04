@@ -39,7 +39,7 @@
 		$ret = $db->query($sql);
 		$row = $ret->fetchArray(SQLITE3_ASSOC);
 		if($row){
-			$_SESSION['UserName']=$user;
+			$_SESSION['User_Name']=$user;
 			$status = array('credentials' => true);
 		}
 		else{
@@ -50,7 +50,7 @@
 
 	function logout(){
 		session_start();
-		unset($_SESSION['UserName']);
+		unset($_SESSION['User_Name']);
 		session_destroy();
 		$status = array('logout' => true);
 		echo json_encode($status);
@@ -58,7 +58,7 @@
 
 	function usrStatus(){
 		session_start();
-		if(isset($_SESSION['UserName'])){
+		if(isset($_SESSION['User_Name'])){
 			$status = array('connected' => true);
 		}
 		else{
@@ -69,7 +69,7 @@
 
 	function uploadImage($db){
 		session_start();
-		if(isset($_SESSION['UserName'])){
+		if(isset($_SESSION['User_Name'])){
 			print_r($_FILES);
 			if($_FILES['attachment']['size'] != 0){
 				$tmpImg = file_get_contents($_FILES['attachment']['tmp_name']);
@@ -126,7 +126,7 @@
 
 	function getServices($db){
 		session_start();
-		if(isset($_SESSION['UserName'])){
+		if(isset($_SESSION['User_Name'])){
 			$search = $_REQUEST['search'];
 			$sql = "SELECT * FROM services WHERE sv_name like '%$search%' or sv_description like '%$search%' ORDER BY sv_order ASC";
 			$ret = $db->query($sql);
@@ -149,7 +149,7 @@
 
 	function getUserPass($db){
 		session_start();
-		if(isset($_SESSION['UserName'])){
+		if(isset($_SESSION['User_Name'])){
 			$sql = "SELECT * FROM users";
 			$ret = $db->query($sql);
 			$userpass = array();
@@ -164,7 +164,7 @@
 
 	function setUserPass($db){
 		session_start();
-		if(isset($_SESSION['UserName'])){
+		if(isset($_SESSION['User_Name'])){
 			$user = $_REQUEST['user'];
 			$pass = $_REQUEST['pass'];
 
@@ -201,7 +201,7 @@
 
 	function updateOrder($db){
 		session_start();
-		if(isset($_SESSION['UserName'])){
+		if(isset($_SESSION['User_Name'])){
 			$new_order = $_POST;
 			foreach ($new_order['positions'] as $value) {
 				$sv_id = $value['sv_id'];
@@ -230,7 +230,7 @@
 
 	function deleteService($db){
 		session_start();
-		if(isset($_SESSION['UserName'])){
+		if(isset($_SESSION['User_Name'])){
 			$value = $_POST;
 			$sv_id = $value['sv_id'];
 			$sql = "DELETE FROM services WHERE sv_id = $sv_id";
@@ -253,7 +253,7 @@
 
 	function deleteImage($db){
 		session_start();
-		if(isset($_SESSION['UserName'])){
+		if(isset($_SESSION['User_Name'])){
 			$value = $_POST;
 			$img_id = $value['img_id'];
 			$sql = "DELETE FROM images WHERE img_id = $img_id";
@@ -276,7 +276,7 @@
 
 	function addService($db){
 		session_start();
-		if(isset($_SESSION['UserName'])){
+		if(isset($_SESSION['User_Name'])){
 			$value = $_POST;
 			$sv_name = $value['sv_name'];
 			$sv_description = $value['sv_description'];
@@ -307,7 +307,7 @@
 
 	function updateService($db){
 		session_start();
-		if(isset($_SESSION['UserName'])){
+		if(isset($_SESSION['User_Name'])){
 			$value = $_POST;
 			$sv_id = $value['sv_id'];
 			$sv_name = $value['sv_name'];
